@@ -22,14 +22,12 @@ const photos = allFiles
               [column-fill:_balance]">
     {
       photos.map((src, i) => (
-        <div class="break-inside-avoid mb-6 rounded-xl overflow-hidden bg-zinc-900 cursor-pointer group">
+        <div class="break-inside-avoid mb-6 rounded-xl overflow-hidden bg-zinc-900">
           <img
             src={src}
             alt={`BTS photo ${i + 1}`}
             loading="lazy"
-            class="w-full h-auto
-                   grayscale opacity-80 transition-all duration-500
-                   group-hover:grayscale-0 group-hover:opacity-100"
+            class="w-full h-auto"
           />
         </div>
       ))
