@@ -1,0 +1,38 @@
+---
+import fs from 'node:fs';
+import path from 'node:path';
+
+const btsDir = path.join(process.cwd(), 'public', 'bts');
+const allFiles = fs.readdirSync(btsDir);
+const photos = allFiles
+  .filter((f) => /\.(jpg|jpeg|png|webp)$/i.test(f))
+  .map((f) => `/bts/${f}`);
+---
+
+<section class="py-24 bg-black text-white">
+  <div class="px-6 mb-12 text-center">
+    <h2 class="text-2xl md:text-3xl font-bold uppercase tracking-[0.2em]">
+      BEHIND THE SCENES
+    </h2>
+    <p class="mt-2 text-sm text-gray-500 tracking-[0.3em]">幕后花絮</p>
+  </div>
+
+  <div class="px-6 max-w-7xl mx-auto
+              columns-1 md:columns-2 lg:columns-3 gap-6
+              [column-fill:_balance]">
+    {
+      photos.map((src, i) => (
+        <div class="break-inside-avoid mb-6 rounded-xl overflow-hidden bg-zinc-900 cursor-pointer group">
+          <img
+            src={src}
+            alt={`BTS photo ${i + 1}`}
+            loading="lazy"
+            class="w-full h-auto
+                   grayscale opacity-80 transition-all duration-500
+                   group-hover:grayscale-0 group-hover:opacity-100"
+          />
+        </div>
+      ))
+    }
+  </div>
+</section>

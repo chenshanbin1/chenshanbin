@@ -1,0 +1,51 @@
+---
+import { Image } from 'astro:assets';
+import portraitImg from '../assets/chenshanbin.jpeg';
+---
+
+<section class="min-h-screen grid grid-cols-1 md:grid-cols-2 bg-black">
+  <!-- LEFT: Full-bleed portrait -->
+  <div class="relative h-80 md:h-full overflow-hidden cursor-pointer group">
+    <Image
+      src={portraitImg}
+      alt="Portrait of Chen Shanbin"
+      class="absolute inset-0 w-full h-full object-cover
+             grayscale contrast-125 opacity-80
+             transition-all duration-[1500ms] ease-out
+             group-hover:grayscale-0 group-hover:opacity-100 group-hover:contrast-100"
+    />
+  </div>
+
+  <!-- RIGHT: Editorial typography -->
+  <div class="bg-black flex flex-col justify-center p-10 md:p-16 lg:p-24">
+    <!-- Name -->
+    <h1 class="font-serif text-7xl md:text-8xl lg:text-9xl font-bold
+               text-white tracking-tighter leading-[0.9]">
+      CHEN<br />SHANBIN
+    </h1>
+
+    <!-- Chinese name + title -->
+    <h2 class="mt-6 font-sans text-xl md:text-2xl
+               text-zinc-400 tracking-[0.3em]">
+      陈 善 彬 &middot; Director / DOP
+    </h2>
+
+    <!-- Decorative line -->
+    <div class="mt-10 w-16 h-px bg-zinc-700"></div>
+
+    <!-- Chinese intro -->
+    <p class="mt-10 max-w-md text-zinc-400 text-base md:text-lg leading-relaxed
+              font-sans tracking-wide">
+      致力于将复杂的商业诉求，转化为直击人心的视觉语言。
+      不仅是光影的记录者，更是品牌影像的构建师。
+      以每一次精准的快门，打破常规叙事的边界，
+      寻找艺术表达与商业价值的最优解。
+    </p>
+
+    <!-- English tagline -->
+    <p class="mt-6 max-w-md text-gray-500 text-xs md:text-sm leading-relaxed
+              font-sans tracking-[0.15em] uppercase">
+      CRAFTING VISUAL STORIES THAT RESONATE BEYOND THE FRAME.
+    </p>
+  </div>
+</section>

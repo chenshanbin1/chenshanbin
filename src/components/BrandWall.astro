@@ -1,0 +1,32 @@
+---
+import fs from 'node:fs';
+import path from 'node:path';
+
+const logosDir = path.join(process.cwd(), 'public', 'logos');
+const logoFiles = fs.readdirSync(logosDir);
+const logos = logoFiles
+  .filter((f) => /\.(png|jpg|jpeg|webp|svg)$/i.test(f))
+  .map((f) => `/logos/${f}`);
+---
+
+<section class="py-24 bg-black text-white">
+  <div class="px-6 mb-12 text-center">
+    <h2 class="text-2xl md:text-3xl font-bold uppercase tracking-[0.2em]">
+      SELECTED BRANDS
+    </h2>
+    <p class="mt-2 text-sm text-gray-500 tracking-[0.3em]">服务品牌</p>
+  </div>
+
+  <div class="grid grid-cols-4 md:grid-cols-7 gap-1 px-8 lg:px-16 w-full">
+    {
+      logos.map((src) => {
+        const padding = 'p-2';
+        return (
+        <div class={`flex items-center justify-center aspect-[3/2] ${padding} border border-zinc-900 hover:border-zinc-700 transition-colors duration-500`}>
+          <img src={src} alt="Brand logo" loading="lazy" class="max-w-full max-h-full object-contain" />
+        </div>
+        );
+      })
+    }
+  </div>
+</section>

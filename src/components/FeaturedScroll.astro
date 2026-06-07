@@ -1,0 +1,145 @@
+---
+import { getCollection } from 'astro:content';
+
+const featuredWorks = (await getCollection('works'))
+  .filter((w) => w.data.featured === true);
+
+const tilts = ['-rotate-1', 'rotate-2', '-rotate-2', 'rotate-1', '-rotate-1'];
+---
+
+<section class="py-24 bg-black">
+  <div class="px-6 mb-10 flex items-end justify-between">
+    <p class="text-xs uppercase tracking-[0.3em] text-gray-500">Featured Work / 主推作品</p>
+    <span class="text-xs text-gray-600 tracking-wider hidden md:inline">滑动查看更多 &#8594;</span>
+  </div>
+
+  <!-- Scroll wrapper -->
+  <div class="relative group/scroll" id="featured-scroll-area">
+    <!-- Scroll container -->
+    <div
+      id="featured-scroll"
+      class="flex overflow-x-auto snap-x snap-mandatory gap-6 px-6 pb-8 scroll-smooth scrollbar-none"
+    >
+      {
+        featuredWorks.map((work, i) => {
+          const tilt = tilts[i % tilts.length];
+          const hasVideo = !!work.data.videoUrl;
+          return (
+            <div
+              class={`group snap-center shrink-0 w-[75vw] max-w-md ${tilt}
+                       transition-all duration-500 ease-out
+                       hover:scale-[1.02] hover:-translate-y-1 hover:rotate-0 cursor-pointer`}
+              {...(hasVideo ? { 'data-video-url': work.data.videoUrl } : {})}
+            >
+              <div class="rounded-xl overflow-hidden bg-zinc-900 border border-transparent
+                          transition-all duration-500 ease-out
+                          group-hover:border-white/10 group-hover:shadow-[0_0_30px_rgba(255,255,255,0.03)]
+                          relative">
+                <div class="aspect-video">
+                  <img
+                    src={work.data.coverImage}
+                    alt={work.data.title}
+                    class="w-full h-full object-cover
+                           transition-colors duration-500 ease-out group-hover:bg-zinc-700"
+                  />
+                </div>
+                {hasVideo && (
+                  <div class="absolute inset-0 flex items-center justify-center
+                              opacity-0 group-hover:opacity-100 transition-opacity duration-500
+                              pointer-events-none">
+                    <div class="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm
+                                flex items-center justify-center
+                                group-hover:scale-100 scale-75
+                                transition-transform duration-500 ease-out">
+                      <svg width="24" height="28" viewBox="0 0 24 28" fill="none" xmlns="http://www.w3.org/2000/svg" class="ml-1">
+                        <path d="M0 0v28l24-14z" fill="white"/>
+                      </svg>
+                    </div>
+                  </div>
+                )}
+              </div>
+              <p class="mt-4 text-xs uppercase tracking-[0.2em] text-gray-500">{work.data.client}</p>
+              <h3 class="mt-1 text-xl font-bold text-white">{work.data.title}</h3>
+            </div>
+          );
+        })
+      }
+    </div>
+
+    <!-- Left arrow -->
+    <button
+      id="scroll-arrow-left"
+      class="hidden absolute left-2 top-1/2 -translate-y-1/2 z-10
+             w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/10
+             flex items-center justify-center
+             text-white/70 hover:text-white hover:bg-white/20
+             transition-all duration-300
+             opacity-0 group-hover/scroll:opacity-100"
+      aria-label="向左滑动"
+    >
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 4l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+
+    <!-- Right arrow -->
+    <button
+      id="scroll-arrow-right"
+      class="absolute right-2 top-1/2 -translate-y-1/2 z-10
+             w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/10
+             flex items-center justify-center
+             text-white/70 hover:text-white hover:bg-white/20
+             transition-all duration-300"
+      aria-label="向右滑动"
+    >
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M8 4l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll('[data-video-url]').forEach((card) => {
+    card.addEventListener('click', () => {
+      const url = card.getAttribute('data-video-url');
+      if (url && typeof window.openVideo === 'function') {
+        window.openVideo(url);
+      }
+    });
+  });
+
+  // --- Scroll arrows ---
+  (function() {
+    const scroll = document.getElementById('featured-scroll');
+    const arrowLeft = document.getElementById('scroll-arrow-left');
+    const arrowRight = document.getElementById('scroll-arrow-right');
+    if (!scroll || !arrowLeft || !arrowRight) return;
+
+    function updateArrows() {
+      const atStart = scroll.scrollLeft <= 2;
+      const atEnd = scroll.scrollLeft + scroll.clientWidth >= scroll.scrollWidth - 2;
+
+      arrowLeft.classList.toggle('hidden', atStart);
+      arrowRight.classList.toggle('hidden', atEnd);
+
+      // Also update right arrow opacity via class
+      arrowRight.style.opacity = atEnd ? '0' : '';
+      arrowRight.classList.toggle('opacity-0', atEnd);
+      arrowRight.classList.toggle('pointer-events-auto', !atEnd);
+    }
+
+    arrowLeft.addEventListener('click', () => {
+      scroll.scrollBy({ left: -scroll.clientWidth * 0.75, behavior: 'smooth' });
+    });
+
+    arrowRight.addEventListener('click', () => {
+      scroll.scrollBy({ left: scroll.clientWidth * 0.75, behavior: 'smooth' });
+    });
+
+    scroll.addEventListener('scroll', updateArrows, { passive: true });
+    window.addEventListener('resize', updateArrows);
+
+    // Initial check
+    updateArrows();
+
+    // Show right arrow initially (it's always visible at start)
+    arrowRight.classList.remove('hidden');
+  })();
+</script>

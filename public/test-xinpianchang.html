@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <title>新片场嵌入测试</title>
+  <style>
+    body {
+      margin: 0;
+      background: #000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      color: #fff;
+      font-family: sans-serif;
+    }
+    .player-wrap {
+      width: 100%;
+      max-width: 960px;
+      aspect-ratio: 16 / 9;
+    }
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      border-radius: 12px;
+    }
+    p { margin-top: 20px; color: #888; font-size: 14px; }
+    .success { color: #4ade80; }
+    .fail { color: #f87171; }
+  </style>
+</head>
+<body>
+  <h2>新片场 嵌入测试</h2>
+  <div class="player-wrap">
+    <iframe
+      src="https://player.xinpianchang.com/?aid=13698867&mid=rVo9wyB53L04l5PG"
+      allow="fullscreen"
+      allowfullscreen
+    ></iframe>
+  </div>
+  <p>如果能正常播放 → 新片场「分享可见」嵌入方案<span class="success">可行</span></p>
+  <p>如果黑屏或报错 → 需要换<span class="fail">其他方案</span></p>
+</body>
+</html>

@@ -1,0 +1,35 @@
+---
+import '../styles/global.css';
+import IntroSection from '../components/IntroSection.astro';
+import FeaturedScroll from '../components/FeaturedScroll.astro';
+import PortfolioGrid from '../components/PortfolioGrid.astro';
+import BrandWall from '../components/BrandWall.astro';
+import BTS from '../components/BTS.astro';
+import VideoModal from '../components/VideoModal.astro';
+---
+
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Portfolio · 影视作品集</title>
+  </head>
+  <body class="bg-black text-white font-sans antialiased">
+    <main>
+      <IntroSection />
+      <FeaturedScroll />
+      <PortfolioGrid />
+      <BrandWall />
+      <BTS />
+    </main>
+
+    <VideoModal />
+
+    <footer class="py-12 text-center text-xs text-gray-600 tracking-widest uppercase">
+      <p>&copy; 2024 Lorem Ipsum Studio. All rights reserved.</p>
+    </footer>
+  </body>
+</html>

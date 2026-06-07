@@ -1,0 +1,98 @@
+<!-- Video Lightbox Overlay -->
+<div id="video-modal" class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-black/85 backdrop-blur-md hidden">
+  <div id="video-modal-bg" class="absolute inset-0"></div>
+
+  <div class="relative z-10 w-full max-w-5xl mx-4">
+    <iframe
+      id="video-iframe"
+      src=""
+      class="w-full aspect-video rounded-xl bg-black"
+      allow="autoplay; fullscreen"
+      allowfullscreen
+    ></iframe>
+
+    <a id="video-fallback" href="#" target="_blank" rel="noopener"
+       class="hidden mt-4 text-center block text-sm text-gray-400 hover:text-white transition-colors">
+      如无法播放，点击此处直接观看 &#8599;
+    </a>
+
+    <button id="video-modal-close" class="absolute -top-12 right-0 w-10 h-10 flex items-center justify-center text-white/60 hover:text-white transition-colors text-2xl leading-none" aria-label="关闭">&#10005;</button>
+  </div>
+</div>
+
+<script is:inline>
+  function __getBvid(url) {
+    var m = url.match(/BV[0-9a-zA-Z]+/);
+    return m ? m[0] : null;
+  }
+
+  function __getXpcAid(url) {
+    var m = url.match(/\/a(\d+)/);
+    return m ? m[1] : null;
+  }
+
+  function __getXpcMid(url) {
+    var m = url.match(/[?&]mid=([^&]+)/);
+    return m ? m[1] : null;
+  }
+
+  function __buildIframeSrc(url) {
+    // Bilibili
+    var bvid = __getBvid(url);
+    if (bvid) {
+      return 'https://player.bilibili.com/player.html?bvid=' + bvid + '&high_quality=1&danmaku=0&autoplay=1';
+    }
+
+    // XinPianChang embed URL - use directly
+    if (url.indexOf('player.xinpianchang.com') > -1) {
+      return url;
+    }
+
+    // XinPianChang page URL - build embed
+    var aid = __getXpcAid(url);
+    if (aid) {
+      var mid = __getXpcMid(url) || '';
+      var embedUrl = 'https://player.xinpianchang.com/?aid=' + aid;
+      if (mid) embedUrl += '&mid=' + mid;
+      return embedUrl;
+    }
+
+    // Unknown - use URL directly
+    return url;
+  }
+
+  window.openVideo = function(videoUrl) {
+    if (!videoUrl) return;
+
+    var modal = document.getElementById('video-modal');
+    var iframe = document.getElementById('video-iframe');
+    var fallback = document.getElementById('video-fallback');
+
+    var src = __buildIframeSrc(videoUrl);
+    iframe.src = src;
+    fallback.href = videoUrl;
+    fallback.classList.remove('hidden');
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  };
+
+  window.closeVideo = function() {
+    var modal = document.getElementById('video-modal');
+    var iframe = document.getElementById('video-iframe');
+    var fallback = document.getElementById('video-fallback');
+
+    iframe.src = '';
+    fallback.href = '#';
+    fallback.classList.add('hidden');
+    modal.classList.add('hidden');
+    document.body.style.overflow = '';
+  };
+
+  document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('video-modal-bg').addEventListener('click', window.closeVideo);
+    document.getElementById('video-modal-close').addEventListener('click', window.closeVideo);
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') { window.closeVideo(); }
+    });
+  });
+</script>

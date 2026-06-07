@@ -1,0 +1,121 @@
+---
+import { getCollection } from 'astro:content';
+
+const allWorks = await getCollection('works');
+
+// Fixed category order
+const categoryOrder = ['TVC 商业广告', '产品TVC', '宣传片', '企业家IP形象片', '电影', 'MV', '短视频'];
+const existingCategories = new Set(allWorks.map((w) => w.data.category));
+const categories = ['全部', ...categoryOrder.filter((c) => existingCategories.has(c))];
+---
+
+<section class="py-24 bg-black text-white" id="portfolio">
+  <div class="px-6 mb-10">
+    <p class="text-xs uppercase tracking-[0.3em] text-gray-500">Portfolio / 作品集</p>
+  </div>
+
+  <!-- Category filters -->
+  <div class="flex flex-wrap gap-3 px-6 mb-12" id="filter-bar">
+    {
+      categories.map((cat) => (
+        <button
+          class={`filter-btn px-5 py-2 text-sm border rounded-full transition-colors duration-300
+            ${cat === '全部'
+              ? 'filter-active bg-white text-black border-white'
+              : 'border-zinc-700 text-gray-400 hover:border-white hover:text-white'}`}
+          data-category={cat}
+        >
+          {cat}
+        </button>
+      ))
+    }
+  </div>
+
+  <!-- Project grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-6" id="project-grid">
+    {
+      allWorks.map((work) => {
+        const hasVideo = !!work.data.videoUrl;
+        return (
+        <div
+          class="project-card group cursor-pointer
+                 transition-all duration-500 ease-out
+                 hover:scale-[1.02] hover:-translate-y-1"
+          data-category={work.data.category}
+          {...(hasVideo ? { 'data-video-url': work.data.videoUrl } : {})}
+        >
+          <div class="aspect-video rounded-xl overflow-hidden bg-zinc-900 border border-transparent
+                      transition-all duration-500 ease-out
+                      group-hover:border-white/10 group-hover:shadow-[0_0_30px_rgba(255,255,255,0.03)]
+                      relative">
+            <img
+              src={work.data.coverImage}
+              alt={work.data.title}
+              class="w-full h-full object-cover
+                     transition-colors duration-500 ease-out"
+            />
+
+            {hasVideo && (
+              <div class="absolute inset-0 flex items-center justify-center
+                          opacity-0 group-hover:opacity-100 transition-opacity duration-500
+                          pointer-events-none">
+                <div class="w-14 h-14 rounded-full bg-white/20 backdrop-blur-sm
+                            flex items-center justify-center
+                            group-hover:scale-100 scale-75
+                            transition-transform duration-500 ease-out">
+                  <svg width="20" height="24" viewBox="0 0 24 28" fill="none" xmlns="http://www.w3.org/2000/svg" class="ml-0.5">
+                    <path d="M0 0v28l24-14z" fill="white"/>
+                  </svg>
+                </div>
+              </div>
+            )}
+          </div>
+          <p class="mt-3 text-xs uppercase tracking-[0.15em] text-gray-500">{work.data.client}</p>
+          <h3 class="mt-1 text-lg font-semibold text-white">{work.data.title}</h3>
+        </div>
+        );
+      })
+    }
+  </div>
+</section>
+
+<style>
+  .filter-active {
+    background-color: white;
+    color: black;
+    border-color: white;
+  }
+</style>
+
+<script>
+  const filterBtns = document.querySelectorAll('#filter-bar .filter-btn');
+  const projectCards = document.querySelectorAll('#project-grid .project-card');
+
+  filterBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const category = btn.getAttribute('data-category');
+
+      filterBtns.forEach((b) => b.classList.remove('filter-active', 'bg-white', 'text-black', 'border-white'));
+      btn.classList.add('filter-active', 'bg-white', 'text-black', 'border-white');
+
+      projectCards.forEach((card) => {
+        const cardCategory = card.getAttribute('data-category');
+        if (category === '全部' || cardCategory === category) {
+          card.style.display = '';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+  });
+
+  // Video click handler
+  projectCards.forEach((card) => {
+    card.addEventListener('click', () => {
+      const url = card.getAttribute('data-video-url');
+      if (url && typeof window.openVideo === 'function') {
+        window.openVideo(url);
+      }
+    });
+  });
+</script>
